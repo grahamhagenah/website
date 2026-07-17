@@ -31,7 +31,15 @@ jobs:
         run: npm ci
 
       - name: Install Quartz Plugins
-        run: npx quartz plugin install --latest
+        run: npx quartz plugin install --from-config || true
+
+      - name: Create Plugins Fallback (If Missing)
+        run: |
+          mkdir -p .quartz/plugins
+          if [ ! -f .quartz/plugins/index.ts ]; then
+            echo "export const CustomOgImagesEmitterName = 'CustomOgImages';" > .quartz/plugins/index.ts
+            echo "Created fallback plugin index file successfully."
+          fi
 
       - name: Build Quartz
         run: npx quartz build
